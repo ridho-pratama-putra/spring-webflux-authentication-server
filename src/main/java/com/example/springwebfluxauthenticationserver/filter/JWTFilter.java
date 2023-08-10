@@ -21,17 +21,18 @@ public class JWTFilter extends AuthenticationWebFilter {
     public JWTFilter(ReactiveAuthenticationManager authenticationManager) {
         super(authenticationManager);
         super.setServerAuthenticationConverter(new CustomAuthenticationConverter());
+        logger.info("masuk constructor : JWTFilter");
     }
 
     @Override
     protected Mono<Void> onAuthenticationSuccess(Authentication authentication, WebFilterExchange webFilterExchange) {
-        logger.info("masuk JWT onAuthenticationSuccess filter");
+        logger.info("onAuthenticationSuccess : JWTFilter");
         return super.onAuthenticationSuccess(authentication, webFilterExchange);
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        logger.info("masuk JWT filter");
+        logger.info("filter : JWTFilter");
         return super.filter(exchange, chain);
     }
 }
