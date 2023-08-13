@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("secured-controller")
+@RequestMapping("/secured-controller")
 public class SecuredController {
     
-    @GetMapping("/")
+    @GetMapping("")
     Mono<String> hai() {
         return Mono.just("hai you're allowed");
     }
