@@ -8,7 +8,7 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.example.springwebfluxauthenticationserver.models.BearerToken;
+import com.example.springwebfluxauthenticationserver.models.CustomBearerToken;
 
 import reactor.core.publisher.Mono;
 
@@ -25,7 +25,7 @@ public class CustomAuthenticationConverter implements ServerAuthenticationConver
                         .getFirst(HttpHeaders.AUTHORIZATION))
                         .filter(s -> s.startsWith("Bearer "))
                         .map(s -> s.substring(7))
-                        .map(s -> new BearerToken(s))
+                        .map(s -> new CustomBearerToken(null, null, null, null, null))
                 ;
                 return justOrEmpty;
 
