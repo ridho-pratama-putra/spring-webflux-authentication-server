@@ -1,7 +1,7 @@
 package com.example.springwebfluxauthenticationserver.filter;
 
+import java.util.Arrays;
 import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -17,6 +17,7 @@ import org.springframework.web.server.WebFilterChain;
 
 import reactor.core.publisher.Mono;
 
+// this is unused due to cant work properly on part function filter
 public class CustomAuthenticationWebFilter extends AuthenticationWebFilter {
     Logger logger = LoggerFactory.getLogger(CustomAuthenticationWebFilter.class);
 
@@ -25,14 +26,13 @@ public class CustomAuthenticationWebFilter extends AuthenticationWebFilter {
     public CustomAuthenticationWebFilter(ReactiveAuthenticationManager authenticationManager, ServerAuthenticationConverter serverAuthenticationConverter) {
         super(authenticationManager);
         super.setServerAuthenticationConverter(serverAuthenticationConverter);
-        super.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/login"));
         this.reactiveAuthenticationManager = authenticationManager;
         logger.info("masuk constructor : JWTFilter");
     }
 
     @Override
     protected Mono<Void> onAuthenticationSuccess(Authentication authentication, WebFilterExchange webFilterExchange) {
-        logger.info("onAuthenticationSuccess : JWTFilter");
+        logger.info("onAuthenticationSuccess : CustomAuthenticationWebFilter");
         return super.onAuthenticationSuccess(authentication, webFilterExchange);
     }
     
@@ -44,6 +44,8 @@ public class CustomAuthenticationWebFilter extends AuthenticationWebFilter {
             // return super.filter(exchange, chain);
             this.reactiveAuthenticationManager.authenticate(new Authentication() {
 
+                private boolean isAuthenticated;
+
                 @Override
                 public String getName() {
                     // TODO Auto-generated method stub
@@ -53,8 +55,14 @@ public class CustomAuthenticationWebFilter extends AuthenticationWebFilter {
 
                 @Override
                 public Collection<? extends GrantedAuthority> getAuthorities() {
-                    // TODO Auto-generated method stub
-                    throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+                    GrantedAuthority grantedAuthority = new GrantedAuthority() {
+
+                        @Override
+                        public String getAuthority() {
+                            return "BOLEH_LIHAT";
+                        } 
+                    };
+                    return Arrays.asList(grantedAuthority);
                 }
 
                 @Override
@@ -65,26 +73,25 @@ public class CustomAuthenticationWebFilter extends AuthenticationWebFilter {
 
                 @Override
                 public Object getDetails() {
-                    // TODO Auto-generated method stub
-                    throw new UnsupportedOperationException("Unimplemented method 'getDetails'");
+                    return "new getDetails";
                 }
 
                 @Override
                 public Object getPrincipal() {
                     // TODO Auto-generated method stub
-                    throw new UnsupportedOperationException("Unimplemented method 'getPrincipal'");
+                    // throw new UnsupportedOperationException("Unimplemented method 'getPrincipal'");
+                    return "new getPrincipal";
+
                 }
 
                 @Override
                 public boolean isAuthenticated() {
-                    // TODO Auto-generated method stub
-                    throw new UnsupportedOperationException("Unimplemented method 'isAuthenticated'");
+                    return isAuthenticated;
                 }
 
                 @Override
                 public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-                    // TODO Auto-generated method stub
-                    throw new UnsupportedOperationException("Unimplemented method 'setAuthenticated'");
+                    isAuthenticated = isAuthenticated;
                 }
             });
         }

@@ -21,10 +21,11 @@ public class CustomAuthenticationManager implements ReactiveAuthenticationManage
     public Mono<Authentication> authenticate(Authentication authentication) {
         String username = authentication.getName();
         // String password = authentication.getCredentials().toString();
-        logger.info("authentication ::: " + authentication);
         
         ProviderManager providerManager = new ProviderManager(customAuthenticationProvider);
         Authentication authenticate = providerManager.authenticate(authentication);
+        logger.info("authentication ::: {}", username);
+        logger.info("authentication ::: {}", authenticate.isAuthenticated());
         return Mono.just(authenticate);
     }
 }
