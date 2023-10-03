@@ -45,6 +45,7 @@ public class CustomAuthenticationSuccessHandler implements ServerAuthenticationS
             return webFilterExchange.getExchange().getResponse().writeAndFlushWith(Flux.just(just));
         }
 
+        // forward request to controller
         return webFilterExchange.getChain().filter(webFilterExchange.getExchange());
     }    
 }
