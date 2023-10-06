@@ -23,50 +23,45 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class CustomAuthenticationConverter implements ServerAuthenticationConverter {
-        Logger logger = LoggerFactory.getLogger(CustomAuthenticationConverter.class);
+    Logger logger = LoggerFactory.getLogger(CustomAuthenticationConverter.class);
 
-        @Autowired 
-        private ObjectMapper objectMapper;
-        
-        @Override
-        public Mono<Authentication> convert(ServerWebExchange exchange) {
-                logger.info("convert : CustomAuthenticationConverter {} ", exchange.getRequest().getURI().getPath());
-                if (exchange.getRequest().getURI().getPath().equals("/login")) {
-                        Flux<Authentication> flatMap = exchange.getRequest().getBody()
-                                .flatMap(dataBuffer -> {
-                                        String jsonBody;
-                                        JsonNode rootNode;
-                                        try {
-                                                jsonBody = new String(dataBuffer.asInputStream().readAllBytes());
-                                                rootNode = objectMapper.readTree(jsonBody);
-                                                String username = rootNode.get("username").asText();
-                                                String password = rootNode.get("password").asText();
-                            
-                                                Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
-                                                return Mono.just(authentication);
-                                        } catch (JsonMappingException e) {
-                                                e.printStackTrace();
-                                        } catch (JsonProcessingException e) {
-                                                e.printStackTrace();
-                                        } catch (IOException e) {
-                                                e.printStackTrace();
-                                        }
-                                        return Mono.empty();
-                                });
-                                
-                        return flatMap.last();
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Override
+    public Mono<Authentication> convert(ServerWebExchange exchange) {
+        logger.info("convert : CustomAuthenticationConverter {} ", exchange.getRequest().getURI().getPath());
+        if (exchange.getRequest().getURI().getPath().equals("/login")) {
+            Flux<Authentication> flatMap = exchange.getRequest().getBody().flatMap(dataBuffer -> {
+                String jsonBody;
+                JsonNode rootNode;
+                try {
+                    jsonBody = new String(dataBuffer.asInputStream().readAllBytes());
+                    rootNode = objectMapper.readTree(jsonBody);
+                    String username = rootNode.get("username").asText();
+                    String password = rootNode.get("password").asText();
+
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(
+                            username, password);
+                    return Mono.just(authentication);
+                } catch (JsonMappingException e) {
+                    e.printStackTrace();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                Mono<Authentication> justOrEmpty = Mono.justOrEmpty(
-                        exchange.getRequest()
-                                .getHeaders()
-                                .getFirst(HttpHeaders.AUTHORIZATION))
-                                .filter(s -> s.startsWith("Bearer "))
-                                .map(s -> s.substring(7))
-                                .map(s -> {
-                                        logger.info("token val ::: ", s);
-                                        return new JwtAuthenticationToken(null, s, null, "Bangkeeeee", null);
-                                })
-                ;
-                return justOrEmpty;
+                return Mono.empty();
+            });
+
+            return flatMap.last();
         }
+        Mono<Authentication> justOrEmpty = Mono
+                .justOrEmpty(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
+                .filter(s -> s.startsWith("Bearer ")).map(s -> s.substring(7)).map(s -> {
+                    logger.info("token val ::: ", s);
+                    return new JwtAuthenticationToken(null, s, null, "Bangkeeeee", null);
+                });
+        return justOrEmpty;
+    }
 }
