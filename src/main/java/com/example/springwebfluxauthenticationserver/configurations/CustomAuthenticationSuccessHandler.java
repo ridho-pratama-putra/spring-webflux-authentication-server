@@ -1,14 +1,9 @@
 package com.example.springwebfluxauthenticationserver.configurations;
 
-import java.util.Collections;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.server.WebFilterExchange;
@@ -29,11 +24,11 @@ public class CustomAuthenticationSuccessHandler implements ServerAuthenticationS
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
-        logger.info("onAuthenticationSuccess :: {}", authentication.getPrincipal());
+        logger.info("onAuthenticationSuccess :: {}", authentication);
 
         if (webFilterExchange.getExchange().getRequest().getPath().toString().equals("/login")) {
             SimpleGrantedAuthority sampleAuth = new SimpleGrantedAuthority("ROLE_APA_INI_YA");
-            CustomBearerToken customBearerToken = new CustomBearerToken(Collections.singleton(sampleAuth), null, null, "bang sardi", null);
+            CustomBearerToken customBearerToken = new CustomBearerToken(authentication.getAuthorities(), null, null, authentication.getName(), null);
             ObjectMapper objectMapper = new ObjectMapper();
             Flux<DataBuffer> just = null;
             try {
