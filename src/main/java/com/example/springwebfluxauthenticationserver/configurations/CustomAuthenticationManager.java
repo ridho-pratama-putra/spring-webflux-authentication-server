@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class CustomAuthenticationManager implements ReactiveAuthenticationManager{
+public class CustomAuthenticationManager implements ReactiveAuthenticationManager {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
     Logger logger = LoggerFactory.getLogger(CustomAuthenticationManager.class);
