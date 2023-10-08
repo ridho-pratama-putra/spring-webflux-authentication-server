@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/secured-controller")
 public class SecuredController {
     
-    @GetMapping("")
+    @GetMapping()
     Mono<String> hai() {
         return Mono.just("hai you're allowed");
     }
