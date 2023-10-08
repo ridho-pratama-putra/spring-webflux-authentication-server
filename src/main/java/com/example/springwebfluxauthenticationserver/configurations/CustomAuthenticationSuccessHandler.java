@@ -5,12 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.springwebfluxauthenticationserver.models.CustomBearerToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,13 +24,14 @@ public class CustomAuthenticationSuccessHandler implements ServerAuthenticationS
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
         logger.info("onAuthenticationSuccess :: {}", authentication);
 
-        if (webFilterExchange.getExchange().getRequest().getPath().toString().equals("/login")) {
-            SimpleGrantedAuthority sampleAuth = new SimpleGrantedAuthority("ROLE_APA_INI_YA");
-            CustomBearerToken customBearerToken = new CustomBearerToken(authentication.getAuthorities(), null, null, authentication.getName(), null);
+        if (webFilterExchange.getExchange().getRequest().getPath().toString().equals("/api/sso/login")) {
+            // SimpleGrantedAuthority sampleAuth = new SimpleGrantedAuthority("ROLE_APA_INI_YA");
+            // CustomBearerToken customBearerToken = new CustomBearerToken(authentication.getAuthorities(), null, null, authentication.getName(), null);
             ObjectMapper objectMapper = new ObjectMapper();
             Flux<DataBuffer> just = null;
             try {
-                just = Flux.just(webFilterExchange.getExchange().getResponse().bufferFactory().wrap(objectMapper.writeValueAsString(customBearerToken).getBytes()));
+                // just = Flux.just(webFilterExchange.getExchange().getResponse().bufferFactory().wrap(objectMapper.writeValueAsString(customBearerToken).getBytes()));
+                just = Flux.just(webFilterExchange.getExchange().getResponse().bufferFactory().wrap(objectMapper.writeValueAsString(authentication).getBytes()));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

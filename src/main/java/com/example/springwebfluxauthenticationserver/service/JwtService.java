@@ -95,7 +95,7 @@ public class JwtService {
             .setSubject(userDetails.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .setIssuer("http://localhost:8080/api")
+            .setIssuer("http://localhost:8080/api/sso")
             .signWith(readPrivateKey, SignatureAlgorithm.RS256);
     return jwtsBuilder.compact();
   }

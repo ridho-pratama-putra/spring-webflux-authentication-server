@@ -31,7 +31,7 @@ public class CustomAuthenticationConverter implements ServerAuthenticationConver
     @Override
     public Mono<Authentication> convert(ServerWebExchange exchange) {
         logger.info("convert : CustomAuthenticationConverter {} ", exchange.getRequest().getURI().getPath());
-        if (exchange.getRequest().getURI().getPath().equals("/login")) {
+        if (exchange.getRequest().getURI().getPath().equals("/api/sso/login")) {
             Flux<Authentication> flatMap = exchange.getRequest().getBody().flatMap(dataBuffer -> {
                 String jsonBody;
                 JsonNode rootNode;
